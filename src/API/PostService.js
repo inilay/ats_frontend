@@ -1,6 +1,6 @@
 import axios from 'axios'
 
-const baseURL = "http://indioraapi.pythonanywhere.com/api/v1";
+const baseURL = "https://indioraapi.pythonanywhere.com/api/v1";
 
 
 export default class PostService {

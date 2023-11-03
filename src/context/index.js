@@ -6,7 +6,7 @@ export const AuthContext = createContext(null)
 
 export const ThemeContext = createContext(null);
 
-const baseURL = "http://indioraapi.pythonanywhere.com/api/v1";
+const baseURL = "https://indioraapi.pythonanywhere.com/api/v1";
 
 export const AuthProvider = ({ children }) => {
     const [authTokens, setAuthTokens] = useState(() =>

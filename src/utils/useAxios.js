@@ -4,7 +4,7 @@ import dayjs from "dayjs";
 import { useContext } from "react";
 import { AuthContext } from "../context";
 
-const baseURL = "http://indioraapi.pythonanywhere.com/api/v1";
+const baseURL = "https://indioraapi.pythonanywhere.com/api/v1";
 
 const useAxios = () => {
   const { authTokens, setUser, setAuthTokens } = useContext(AuthContext);
