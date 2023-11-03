@@ -310,7 +310,7 @@ const Tournament = () => {
                   </Accordion>
                 </div>
               </div>
-              {/* {user !== null && tournament.owner == user.username ? ( */}
+              {user !== null && tournament.owner == user.username ? ( 
                 <>
                   <MyButton
                     additionalCl={"btn-md btn my-3 me-3"}
@@ -327,9 +327,9 @@ const Tournament = () => {
                     Delete
                   </MyButton>
                 </>
-              {/* // ) : (
-              //   <></>
-              // )} */}
+              ) : (
+              <></>
+              )}
             </div>
           </div>
         </div>
