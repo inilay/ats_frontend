@@ -3,7 +3,7 @@ import { useParams } from "react-router-dom";
 import { useFetching } from "../hooks/useFetching";
 import Loader from "../components/UI/Loader/Loader";
 import PostService from "../API/PostService";
-import useAxios from "../utils/useAxios";
+import useAxios from "../API/useAxios";
 import { AuthContext } from "../context";
 import { useNavigate } from "react-router-dom";
 import MyButton from "../components/UI/MyButton/MyButton";
@@ -88,8 +88,8 @@ const Tournament = () => {
                     <div className="tournament_img">
                       <svg
                         xmlns="http://www.w3.org/2000/svg"
-                        width="24rem"
-                        height="24rem"
+                        width="512px"
+                        height="512px"
                         version="1"
                         className="my_svg"
                         viewBox="30 20 300 300"
@@ -310,7 +310,7 @@ const Tournament = () => {
                   </Accordion>
                 </div>
               </div>
-              {user !== null && tournament.owner == user.username ? ( 
+              {/* {user !== null && tournament.owner == user.username ? ( */}
                 <>
                   <MyButton
                     additionalCl={"btn-md btn my-3 me-3"}
@@ -327,9 +327,9 @@ const Tournament = () => {
                     Delete
                   </MyButton>
                 </>
-              ) : (
-              <></>
-              )}
+              {/* // ) : (
+              //   <></>
+              // )} */}
             </div>
           </div>
         </div>

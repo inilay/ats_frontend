@@ -6,7 +6,7 @@ export const AuthContext = createContext(null)
 
 export const ThemeContext = createContext(null);
 
-const baseURL = "https://indioraapi.pythonanywhere.com/api/v1";
+const baseURL = "http://127.0.0.1:49088/api/v1";
 
 export const AuthProvider = ({ children }) => {
     const [authTokens, setAuthTokens] = useState(() =>
@@ -40,7 +40,7 @@ export const AuthProvider = ({ children }) => {
           setAuthTokens(data);
           setUser(jwt_decode(data.access));
           localStorage.setItem("authTokens", JSON.stringify(data));
-          navigate("/");
+          // navigate("/");
     
       } else {
           alert("Something went wrong!");

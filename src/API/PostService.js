@@ -1,20 +1,30 @@
-import axios from 'axios'
-
-const baseURL = "https://indioraapi.pythonanywhere.com/api/v1";
+import useAxios from "./useAxios";
+import axios from "axios";
+const baseURL = "http://127.0.0.1:49088/api/v1";
 
 
 export default class PostService {
 
-    static async getAllTournaments(limit=9, page=1) {
+    static async getAllTournaments(limit=12, page=1, title="", game="") {
       
         const response = await axios.get(`${baseURL}/tournaments/`, 
         {params: {
             limit: limit,
-            offset: page*limit
+            offset: (page-1)*limit,
+            title: title,
+            game: game
         }})
         return  response
 
     }
+
+    static async getAllGames() {
+      
+        const response = await axios.get(`${baseURL}/games/`)
+        return  response
+
+    }
+
 
     static async getTournamentBySlug(slug) {
 
@@ -22,7 +32,6 @@ export default class PostService {
         return  response
 
     }
-
 
     static async createTournament(responseBody) {
 
