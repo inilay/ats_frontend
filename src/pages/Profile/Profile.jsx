@@ -1,20 +1,21 @@
 import React, { useEffect, useState } from "react";
-import PostService from "../API/PostService";
+import PostService from "../../API/PostService";
 import { useParams } from "react-router-dom";
-import { useFetching } from "../hooks/useFetching";
-import { useTournaments } from "../hooks/useTournaments";
-import TournamentList from "../components/TournamentList";
+import { useFetching } from "../../hooks/useFetching";
+import { useTournaments } from "../../hooks/useTournaments";
+import TournamentList from "../../components/TournamentList/TournamentList.jsx";
 import Form from "react-bootstrap/Form";
 import Card from "react-bootstrap/Card";
 import Collapse from "react-bootstrap/Collapse";
-import "../styles/App.css";
-import useAxios from "../API/useAxios";
-import UploadButton from "../components/UI/UploadButton/UploadButton";
-import MyFormGroupInput from "../components/UI/MyFormGroupInput/MyFormGroupInput";
+import "../../styles/App.css";
+import useAxios from "../../API/useAxios";
+import UploadButton from "../../components/UI/UploadButton/UploadButton";
+import MyFormGroupInput from "../../components/UI/MyFormGroupInput/MyFormGroupInput";
 import { useForm } from "react-hook-form";
-import MyButton from "../components/UI/MyButton/MyButton";
+import MyButton from "../../components/UI/MyButton/MyButton";
 import moment from "moment";
-import MyCard from "../components/UI/MyCard/MyCard";
+import MyCard from "../../components/UI/MyCard/MyCard";
+import classes from "./Profile.module.css";
 
 const Profile = () => {
   const api = useAxios();
@@ -140,9 +141,9 @@ const Profile = () => {
               </button>
             </div>
             <Collapse in={openProfileChange} className="mt-2">
-              <div id="example-collapse-text">
+              <div id="example-collapse-text" className={classes.profile_setting_form}>
                 <Form onSubmit={handleImageChangeSubmit} className="my-4">
-                  <MyCard border="success" style={{ width: "80%" }}>
+                  <MyCard border="success">
                     <Card.Header className="card-header-text">
                       Avatar
                     </Card.Header>
@@ -178,9 +179,9 @@ const Profile = () => {
               </button>
             </div>
             <Collapse in={openPasswordChange} className="mt-2">
-              <div id="example-collapse-text">
+              <div id="example-collapse-text" className={classes.security_setting_form}>
                 <Form onSubmit={handlePasswordChangeSubmit} className="my-4">
-                  <MyCard style={{ width: "80%" }}>
+                  <MyCard>
                     <Card.Header className="card-header-text">
                       Change password
                     </Card.Header>

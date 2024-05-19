@@ -47,7 +47,11 @@ h4 {
 }
 
 section {
-    min-height: 100vh;
+    min-height: 90vh;
+
+    @media (max-width: 992px){
+        min-height: 80vh;
+    }
     
 }
 
@@ -63,15 +67,21 @@ a:hover {
 
 .search-input {
     background-color: inherit;
-    color: inherit;
+    color: var(--highlight-color) !important;
+    border: 1px solid var(--highlight-color);
+    border-radius: 5px;
     display: block;
     width: 100%;
     padding: .375rem .75rem;
     font-size: 1rem;
     font-weight: 400;
     line-height: 1.5;
-    border: none;
 
+
+}
+
+.search-input::placeholder{
+    color: var(--highlight-color);
 }
 
 .search-input:focus {
@@ -90,10 +100,7 @@ a:hover {
     color: var(--highlight-color);
 }
 
-.tournament-img {
-    width: 50rem;
-    height: 100%;
-}
+
 
 .card-header-text {
     color: var(--bright-color);
@@ -131,7 +138,15 @@ a:hover {
 
 .form_button_div {
     margin-left: 15%;
-    width: 15rem;
+
+    @media (max-width: 992px){
+        margin-left: 10%;
+    }
+
+    @media (max-width: 576px){
+        margin-left: 5%;
+
+    }
 }
 
 .tournament_card {
@@ -153,11 +168,6 @@ a:hover {
     color: var(--dark-font-color) !important;
     border-color: var(--green);
     outline:var(--green);   
-}
-
-
-.log_div {
-    width: 25%;
 }
 
 .my_log_input:focus {
@@ -220,14 +230,6 @@ a:hover {
     margin-top: 50px;
 }
 
-.tournament_img {
-    display: block;
-    margin-left: auto;
-    margin-right: auto;
-    width: 26rem;
-    height: 26rem;
-    text-align: center;
-}
 
 [data-tooltip] {
     position: relative; 
