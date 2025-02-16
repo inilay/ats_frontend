@@ -1,333 +1,254 @@
-import React, { useEffect, useState, useContext } from "react";
+import React, { useEffect, useState, useContext, Fragment } from "react";
 import { useParams } from "react-router-dom";
 import { useFetching } from "../../hooks/useFetching";
 import Loader from "../../components/UI/Loader/Loader";
-import PostService from "../../API/PostService";
 import useAxios from "../../API/useAxios";
 import { AuthContext } from "../../context";
 import { useNavigate } from "react-router-dom";
 import MyButton from "../../components/UI/MyButton/MyButton";
 import Accordion from "react-bootstrap/Accordion";
 import moment from "moment";
-import RoundRobin from "../../components/RoundRobin";
-import Swiss from "../../components/Swiss";
-import SingleEl from "../../components/SingleEl";
-import DoubleEl from "../../components/DoubleEl";
+import ModeratorSettings from "../../components/ModeratorsSettings/ModeratorSettings.jsx";
 import classes from "./Tournament.module.css";
 import DefaultTournamnetPoster from "../../assets/svg/DefaultTournamnetPoster";
+import BracketController from "../../components/BracketController/BracketController.jsx";
+
+import { setTournament } from "../../store/tournament";
+import { setBracket } from "../../store/bracket";
+import { useSelector, useDispatch } from "react-redux";
+import { followTournament, unFollowTournament, setTournamnetSubscriptions } from "../../store/user.js";
+
+import bracketApi from "../../services/api/bracketApi";
+import tournamentApi from "../../services/api/tournamentApi.js";
+import profileApi from "../../services/api/profileApi.js";
+import axios from "axios";
 
 const Tournament = () => {
-  const params = useParams();
-  const [id, setId] = useState(0);
-  const [bracket, setBracket] = useState([]);
-  const [types, setTypes] = useState("");
-  const [groupStage, setGroupStage] = useState([]);
-  const [tournament, setTournament] = useState({});
+    const dispatch = useDispatch();
+    const params = useParams();
+    const api = useAxios();
+    const public_api = axios;
+    const navigate = useNavigate();
 
-  const { user } = useContext(AuthContext);
-  const [fetchTournament, isLoading, error] = useFetching(async (slug) => {
-    const response = await PostService.getTournamentBySlug(slug);
-    setTournament(response.data);
-  });
+    const [id, setId] = useState(0);
+    const [types, setTypes] = useState("");
+    const [groupStage, setGroupStage] = useState([]);
 
-  const api = useAxios();
-  const navigate = useNavigate();
-  const onDelete = async () => {
-    const response = await api.delete(`/delete_tournament/${params.slug}/`).then(function (response) {
-      if (response.status == 204) {
-        navigate(`/tournaments`)
-      }
-    });;
-  };
+    const tournament = useSelector((state) => state.tournament);
+    const bracket = useSelector((state) => state.bracket);
 
-  const onEdit = async () => {
-    navigate(`/edit_tournament/${params.slug}/`);
-  };
+    const { user } = useContext(AuthContext);
 
-  const [fetchBrackets, isBraLoadind, braError] = useFetching(async (slug) => {
-    const response = await PostService.allTournamentBrackets(slug);
+    const userSlice = useSelector((state) => state.user);
 
-    if (response.data.length > 1) {
-      for (let i = 0; i < response.data.length - 1; i++) {
-        setGroupStage((groupStage) => [
-          ...groupStage,
-          [
-            response.data[i].id,
-            response.data[i].type,
-            response.data[i].bracket,
-          ],
-        ]);
-      }
-    }
-    setBracket(
+    const [fetchTournament, isLoading, error] = useFetching(async (link) => {
+        const response = await tournamentApi.getTournamentBySlug(public_api, link);
+        dispatch(setTournament(response.data));
+    });
 
-      response.data[response.data.length - 1].bracket
-    );
-    setTypes(response.data[response.data.length - 1].type);
-    setId(response.data[response.data.length - 1].id);
-  });
+    const [fetchBrackets, isBraLoadind, braError] = useFetching(async () => {
+        const response = await bracketApi.getBrackets(public_api, tournament.id);
+        dispatch(setBracket({ brackets: response.data }));
+    });
 
-  useEffect(() => {
-    fetchTournament(params.slug);
-    fetchBrackets(params.slug);
-  }, []);
+    const onDelete = async () => {
+        const response = await api.delete(`/delete_tournament/${params.link}/`).then(function (response) {
+            if (response.status == 204) {
+                navigate(`/tournaments`);
+            }
+        });
+    };
 
-  useEffect(() => { }, [bracket]);
+    const onEdit = async () => {
+        navigate(`/edit_tournament/${params.link}/`);
+    };
 
-  return (
-    <section>
-      {isLoading ? (
-        <div className="loader">
-          <Loader />
-        </div>
-      ) : (
-        <div className="container">
-          <div className="row">
-            <div className="col-lg-12 col-md-12">
-              <div className="row">
-                <div className="col-sm-8">
-                  {tournament.poster == null ? (
-                    <div className={`${classes.tournament_default}`}>
-                      <DefaultTournamnetPoster />
-                    </div>
-                  ) : (
-                    <img
-                      src={tournament.poster}
-                      className={`${classes.tournament_img}`}
-                      alt="card text"
-                    />
-                  )}
+    useEffect(() => {
+        if (user) {
+            profileApi.getSubscriptionsBySlug(api).then((response) => {
+                dispatch(setTournamnetSubscriptions({ subscriptions: response.data.subscriptions }));
+            });
+        }
+        fetchTournament(params.link);
+    }, []);
+
+    useEffect(() => {
+        if (tournament.id) {
+            fetchBrackets();
+        }
+    }, [tournament.id]);
+
+    useEffect(() => {}, [bracket]);
+
+    const copyToClipboard = () => {
+        const currentUrl = window.location.href;
+
+        if (navigator.clipboard) {
+            navigator.clipboard
+                .writeText(currentUrl)
+                .then(() => {})
+                .catch((err) => {});
+        } else {
+            // Fallback для старых браузеров
+            const textArea = document.createElement("textarea");
+            textArea.value = currentUrl;
+            document.body.appendChild(textArea);
+            textArea.select();
+            try {
+                document.execCommand("copy");
+            } catch (err) {}
+            document.body.removeChild(textArea);
+        }
+    };
+
+    const followHandler = () => {
+        let data = {
+            tournament_id: tournament.id,
+        };
+        profileApi.createSubscription(api, data).then(() => {
+            dispatch(followTournament({ subscriptions: tournament.id }));
+        });
+    };
+
+    const unFollowHandler = () => {
+        let data = {
+            tournament_id: tournament.id,
+        };
+        profileApi.deleteSubscription(api, { headers: {}, data: data }).then(() => {
+            dispatch(unFollowTournament({ subscriptions: tournament.id }));
+        });
+    };
+
+    return (
+        <section>
+            {isLoading ? (
+                <div className="loader">
+                    <Loader />
                 </div>
-                <div className="col-sm-4">
-                  <div className="d-flex flex-column pt-1">
-                    <h3 className="tournament_text">{tournament.title}</h3>
-                    <p>Start of the tournament</p>
-                    <p className="tournament_text">
-                      {moment(tournament.start_time).format(
-                        " Do MMMM  YYYY, hh:mm"
-                      ) || ""}
-                    </p>
-                    <p>Game</p>
-                    <p className="tournament_text">{tournament.game}</p>
-                    <p>Prize fund</p>
-                    <p className="tournament_text">
-                      {tournament.prize} <span>&#8381;</span>
-                    </p>
-                    <div className={`${classes.tournament_block}`}>
-                      <p>Organizer</p>
-                      <p className="tournament_text ">{tournament.owner}</p>
-                    </div>
-                  </div>
-                </div>
-              </div>
-              <div className="row my-3">
-                <div className="col">
-                  <Accordion flush defaultActiveKey={["1", "2"]} alwaysOpen>
-                    <Accordion.Item eventKey="0">
-                      <Accordion.Header className="my_accordion_body">
-                        <h4>Description</h4>
-                      </Accordion.Header>
-                      <Accordion.Body className="my_accordion_body">
-                        <p>{tournament.content}</p>
-                      </Accordion.Body>
-                    </Accordion.Item>
-                    {groupStage.length > 0 ? (
-                      <>
-                        <Accordion.Item eventKey="1">
-                          <Accordion.Header className="my_accordion_body">
-                            <h4>Group stage</h4>
-                          </Accordion.Header>
-                          <Accordion.Body className="my_accordion_body">
-                            {isBraLoadind ? (
-                              <div className="loader">
-                                <Loader />
-                              </div>
-                            ) : (
-                              <>
-                                {groupStage.map((bracket, idx) => {
-                                  if (bracket[1] === "RR") {
-                                    return (
-                                      <div className="mb-5">
-                                        <h5>Group {idx}</h5>
-                                        <RoundRobin
-                                          id={bracket[0]}
-                                          bracket={bracket[2]}
-                                          owner={tournament.owner}
+            ) : (
+                <div className="container">
+                    <div className="row">
+                        <div className="col-lg-12 col-md-12">
+                            <div className="row">
+                                <div className={`${classes.tournament_img_container} col-sm-8 mb-3`}>
+                                    {tournament.poster ? (
+                                        <div className={`${classes.tournament_default}`}>
+                                            <DefaultTournamnetPoster />
+                                        </div>
+                                    ) : (
+                                        <img
+                                            src={tournament.poster}
+                                            className={`${classes.tournament_img}`}
+                                            alt="card text"
                                         />
-                                      </div>
-                                    );
-                                  } else if (bracket[1] === "SE") {
-                                    return (
-                                      <div className="mb-5">
-                                        <h5>Group {idx}</h5>
-                                        <SingleEl
-                                          id={bracket[0]}
-                                          bracket={bracket[2]}
-                                          owner={tournament.owner}
-                                        />
-                                      </div>
-                                    );
-                                  } else if (bracket[1] === "DE") {
-                                    return (
-                                      <div className="mb-5">
-                                        <h5>Group {idx}</h5>
-                                        <DoubleEl
-                                          id={bracket[0]}
-                                          bracket={bracket[2]}
-                                          owner={tournament.owner}
-                                        />
-                                      </div>
-                                    );
-                                  } else if (bracket[1] === "SW") {
-                                    return (
-                                      <div className="mb-5">
-                                        <h5>Group {idx}</h5>
-                                        <Swiss
-                                          id={bracket[0]}
-                                          bracket={bracket[2]}
-                                          owner={tournament.owner}
-                                        />
-                                      </div>
-                                    );
-                                  }
-                                })}
-                              </>
-                            )}
-                          </Accordion.Body>
-                        </Accordion.Item>
-                        <Accordion.Item eventKey="2">
-                          <Accordion.Header className="my_accordion_body">
-                            <h4>Final stage</h4>
-                          </Accordion.Header>
-                          <Accordion.Body className="my_accordion_body">
-                            {isBraLoadind ? (
-                              <div className="loader">
-                                <Loader />
-                              </div>
-                            ) : (
-                              <>
-                                {(() => {
-                                  if (types == "SE") {
-                                    return (
-                                      <SingleEl
-                                        id={id}
-                                        bracket={bracket}
-                                        owner={tournament.owner}
-                                      />
-                                    );
-                                  } else if (types == "RR") {
-                                    return (
-                                      <RoundRobin
-                                        id={id}
-                                        bracket={bracket}
-                                        owner={tournament.owner}
-                                      />
-                                    );
-                                  } else if (types == "DE") {
-                                    return (
-                                      <DoubleEl
-                                        id={id}
-                                        bracket={bracket}
-                                        owner={tournament.owner}
-                                      />
-                                    );
-                                  } else if (types == "SW") {
-                                    return (
-                                      <Swiss
-                                        id={id}
-                                        bracket={bracket}
-                                        owner={tournament.owner}
-                                      />
-                                    );
-                                  }
-                                })()}
-                              </>
-                            )}
-                          </Accordion.Body>
-                        </Accordion.Item>
-                      </>
-                    ) : (
-                      <Accordion.Item eventKey="1">
-                        <Accordion.Header className="my_accordion_body">
-                          <h4>Bracket</h4>
-                        </Accordion.Header>
-                        <Accordion.Body className="my_accordion_body">
-                          {isBraLoadind ? (
-                            <div className="loader">
-                              <Loader />
+                                    )}
+                                </div>
+                                <div className={`${classes.tournament_info_container} col-sm-4`}>
+                                    <div className={`${classes.tournament_info_container}`}>
+                                        <h2 className="tournament_text">{tournament.title}</h2>
+                                        <p>Start of the tournament</p>
+                                        <p className="tournament_text">
+                                            {moment(tournament.start_time).format(" Do MMMM  YYYY, hh:mm") || ""}
+                                        </p>
+                                        <p>Game</p>
+                                        <p className="tournament_text">{tournament.game}</p>
+                                        <div className={`${classes.tournament_block}`}>
+                                            <p>Organizer</p>
+                                            <p className="tournament_text ">{tournament.owner}</p>
+                                        </div>
+                                        <div className={`${classes.tournament_button_block}`}>
+                                            {userSlice.subscriptions?.includes(tournament.id) ? (
+                                                <MyButton
+                                                    onClick={() => {
+                                                        unFollowHandler();
+                                                    }}
+                                                    additionalCl={`${classes.follow_button} me-3`}
+                                                >
+                                                    Unfollow
+                                                </MyButton>
+                                            ) : (
+                                                <MyButton
+                                                    onClick={() => {
+                                                        followHandler();
+                                                    }}
+                                                    additionalCl={`${classes.follow_button} me-3`}
+                                                >
+                                                    Follow
+                                                </MyButton>
+                                            )}
+
+                                            <MyButton
+                                                onClick={() => {
+                                                    copyToClipboard();
+                                                }}
+                                                additionalCl={`${classes.follow_button}`}
+                                            >
+                                                Copy link
+                                            </MyButton>
+                                        </div>
+                                    </div>
+                                </div>
                             </div>
-                          ) : (
-                            <>
-                              {" "}
-                              {(() => {
-                                if (types == "SE") {
-                                  return (
-                                    <SingleEl
-                                      id={id}
-                                      bracket={bracket}
-                                      owner={tournament.owner}
-                                    />
-                                  );
-                                } else if (types == "RR") {
-                                  return (
-                                    <RoundRobin
-                                      id={id}
-                                      bracket={bracket}
-                                      owner={tournament.owner}
-                                    />
-                                  );
-                                } else if (types == "DE") {
-                                  return (
-                                    <DoubleEl
-                                      id={id}
-                                      bracket={bracket}
-                                      owner={tournament.owner}
-                                    />
-                                  );
-                                } else if (types == "SW") {
-                                  return (
-                                    <Swiss
-                                      id={id}
-                                      bracket={bracket}
-                                      owner={tournament.owner}
-                                    />
-                                  );
-                                }
-                              })()}
-                            </>
-                          )}
-                        </Accordion.Body>
-                      </Accordion.Item>
-                    )}
-                  </Accordion>
+                            <div className="row my-3">
+                                <div className="col">
+                                    <Accordion flush defaultActiveKey={["1"]} alwaysOpen>
+                                        {user?.username == tournament.owner && (
+                                            <Accordion.Item eventKey="2">
+                                                <Accordion.Header className="my_accordion_body">
+                                                    <h4>Settings</h4>
+                                                </Accordion.Header>
+                                                <Accordion.Body className="my_accordion_body">
+                                                    <ModeratorSettings />
+                                                    <>
+                                                        <MyButton
+                                                            additionalCl={`${classes.setting_button} btn-md btn my-3 me-3`}
+                                                            type="submit"
+                                                            onClick={onEdit}
+                                                        >
+                                                            Edit Tournament
+                                                        </MyButton>
+                                                        <MyButton
+                                                            additionalCl={`${classes.setting_button} btn-md btn my-3 me-3`}
+                                                            type="submit"
+                                                            onClick={onDelete}
+                                                        >
+                                                            Delete Tournament
+                                                        </MyButton>
+                                                    </>
+                                                </Accordion.Body>
+                                            </Accordion.Item>
+                                        )}
+                                        <Accordion.Item eventKey="0">
+                                            <Accordion.Header className="my_accordion_body">
+                                                <h4>Description</h4>
+                                            </Accordion.Header>
+                                            <Accordion.Body className="my_accordion_body">
+                                                <p>{tournament.content}</p>
+                                            </Accordion.Body>
+                                        </Accordion.Item>
+                                        <Accordion.Item eventKey="1">
+                                            <Accordion.Header className="my_accordion_body">
+                                                <h4>Bracket</h4>
+                                            </Accordion.Header>
+                                            <Accordion.Body className="my_accordion_body">
+                                                {isBraLoadind ? (
+                                                    <div className="loader">
+                                                        <Loader />
+                                                    </div>
+                                                ) : (
+                                                    <BracketController />
+                                                )}
+                                            </Accordion.Body>
+                                        </Accordion.Item>
+                                    </Accordion>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                 </div>
-              </div>
-              {/* {user !== null && tournament.owner == user.username ? ( */}
-              <>
-                <MyButton
-                  additionalCl={"btn-md btn my-3 me-3"}
-                  type="submit"
-                  onClick={onEdit}
-                >
-                  Edit Tournament
-                </MyButton>
-                <MyButton
-                  additionalCl={"btn-md btn my-3 me-3"}
-                  type="submit"
-                  onClick={onDelete}
-                >
-                  Delete
-                </MyButton>
-              </>
-              {/* // ) : (
-              //   <></>
-              // )} */}
-            </div>
-          </div>
-        </div>
-      )}
-    </section>
-  );
+            )}
+        </section>
+    );
 };
 
 export default Tournament;

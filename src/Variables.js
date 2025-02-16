@@ -1,0 +1,1 @@
+export const API_SERVER = "https://indioraapi.pythonanywhere.com/api/v1";
