@@ -157,26 +157,28 @@ const Tournament = () => {
                                             <p className="tournament_text ">{tournament.owner}</p>
                                         </div>
                                         <div className={`${classes.tournament_button_block}`}>
-                                            {userSlice.subscriptions?.includes(tournament.id) ? (
-                                                <MyButton
-                                                    onClick={() => {
-                                                        unFollowHandler();
-                                                    }}
-                                                    additionalCl={`${classes.follow_button} me-3`}
-                                                >
-                                                    Unfollow
-                                                </MyButton>
-                                            ) : (
-                                                <MyButton
-                                                    onClick={() => {
-                                                        followHandler();
-                                                    }}
-                                                    additionalCl={`${classes.follow_button} me-3`}
-                                                >
-                                                    Follow
-                                                </MyButton>
-                                            )}
-
+                                            {user !== null && <Fragment>
+                                                {userSlice.subscriptions?.includes(tournament.id) ? (
+                                                    <MyButton
+                                                        onClick={() => {
+                                                            unFollowHandler();
+                                                        }}
+                                                        additionalCl={`${classes.follow_button} me-3`}
+                                                    >
+                                                        Unfollow
+                                                    </MyButton>
+                                                ) : (
+                                                    <MyButton
+                                                        onClick={() => {
+                                                            followHandler();
+                                                        }}
+                                                        additionalCl={`${classes.follow_button} me-3`}
+                                                    >
+                                                        Follow
+                                                    </MyButton>
+                                                )}
+                                            </Fragment>
+                                            }
                                             <MyButton
                                                 onClick={() => {
                                                     copyToClipboard();
