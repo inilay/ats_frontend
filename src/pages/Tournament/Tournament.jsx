@@ -157,7 +157,7 @@ const Tournament = () => {
                                             <p className="tournament_text ">{tournament.owner}</p>
                                         </div>
                                         <div className={`${classes.tournament_button_block}`}>
-                                            {user !== null && <Fragment>
+                                        {user !== null && <Fragment>
                                                 {userSlice.subscriptions?.includes(tournament.id) ? (
                                                     <MyButton
                                                         onClick={() => {
@@ -179,6 +179,7 @@ const Tournament = () => {
                                                 )}
                                             </Fragment>
                                             }
+
                                             <MyButton
                                                 onClick={() => {
                                                     copyToClipboard();
