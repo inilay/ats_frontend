@@ -1,1 +1,1 @@
-export const API_SERVER = "http://127.0.0.1:8000/api/v1";
+export const API_SERVER = "https://indioraapi.pythonanywhere.com/api/v1";
