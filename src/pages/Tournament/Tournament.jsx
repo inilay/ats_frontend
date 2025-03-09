@@ -22,6 +22,9 @@ import bracketApi from "../../services/api/bracketApi";
 import tournamentApi from "../../services/api/tournamentApi.js";
 import profileApi from "../../services/api/profileApi.js";
 import axios from "axios";
+import { getToken } from "firebase/messaging";
+import { messaging } from "../../firebase.js";
+
 
 const Tournament = () => {
     const dispatch = useDispatch();
@@ -52,7 +55,7 @@ const Tournament = () => {
     });
 
     const onDelete = async () => {
-        const response = await api.delete(`/delete_tournament/${params.link}/`).then(function (response) {
+        const response = await tournamentApi.deleteTournament(api, params.link).then(function (response) {
             if (response.status == 204) {
                 navigate(`/tournaments`);
             }
@@ -101,13 +104,29 @@ const Tournament = () => {
         }
     };
 
-    const followHandler = () => {
+    const followHandler = async () => {
         let data = {
             tournament_id: tournament.id,
         };
         profileApi.createSubscription(api, data).then(() => {
             dispatch(followTournament({ subscriptions: tournament.id }));
         });
+        if (Notification.permission == "default") {
+            const permission = await Notification.requestPermission();
+            if (permission === 'granted') {
+                getToken(messaging, { vapidKey: 'BGRuxq-Gib48Mul8S-sczHAnfmzFSnruYNZedfuIDDsGDMH8cUlDJEGXumseZBxtRVw2MpH8vVpJYyvMF7yMwL8' }).then((currentToken) => {
+                if (currentToken) {
+                    console.log('currentToken', currentToken);
+                    
+                    let data = {token: currentToken}
+                    profileApi.createPushToken(api, data)
+                } 
+                }).catch((err) => {
+                console.log('An error occurred while retrieving token. ', err);
+                // ...
+                });
+            }
+        }
     };
 
     const unFollowHandler = () => {
