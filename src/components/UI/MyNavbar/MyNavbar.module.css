@@ -23,6 +23,7 @@
     transform: translateX(-60%);
     background: inherit;
     color: var(--dark-ligth);
+
     @media (max-width: 992px) {
         left: 50%;
         transform: translateX(-0%);
@@ -56,6 +57,7 @@
 
 .theme_swither_max {
     margin-left: auto;
+
     @media (max-width: 991px) {
         display: none;
     }
@@ -63,6 +65,7 @@
 
 .theme_swither_min {
     margin-left: auto !important;
+    
     @media (min-width: 992px) {
         display: none;
     }

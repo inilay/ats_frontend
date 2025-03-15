@@ -10,6 +10,7 @@ import { Link } from "react-router-dom";
 
 const MyNavbar = () => {
     const { user, logoutUser } = useContext(AuthContext);
+    
     return (
         <Navbar className={`${classes.my_navbar} mb-3`} abg="dark" expand="lg">
             <Container fluid>
