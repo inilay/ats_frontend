@@ -44,7 +44,7 @@ const MyNavbar = () => {
                     </Nav>
                     <ThemeSwitcher additionalCl={`${classes.theme_swither_max}`} />
                     {user ? (
-                        <Nav className={`ml-auto ${classes.inner_navbar_max}`} navbar>
+                        <Nav className={`ml-auto ${classes.work_navbar_max}`} navbar>
                             <Dropdown>
                                 <Dropdown.Toggle drop="down" className={`${classes.my_toggle} ${"shadow-none"}`}>
                                     <SettingIcon />
