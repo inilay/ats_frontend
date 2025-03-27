@@ -74,13 +74,13 @@
 }
 
 .inner_navbar_max {
-    @media (max-width: 991px) {
+    @media (min-width: 992px) {
         display: none;
     }
 }
 
 .inner_navbar_min {
-    @media (min-width: 991px) {
+    @media (max-width: 992px) {
         display: none;
     }
 }
