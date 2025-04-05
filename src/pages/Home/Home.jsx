@@ -115,7 +115,7 @@ const Home = () => {
                     <h2>Providing the right tools for the gaming community</h2>
                     <p>We aim to keep things simple, but there's plenty more to explore in your website.</p>
                     <MyButton className="btn pb-5">
-                        <a href="/register">
+                        <a className="sign-button" href="/register">
                             <h5>Sign up</h5>
                         </a>
                     </MyButton>
