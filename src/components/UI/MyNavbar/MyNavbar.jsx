@@ -17,7 +17,7 @@ const MyNavbar = () => {
                     <HomeIcon />
                 </Navbar.Brand>
                 <ThemeSwitcher additionalCl={`${classes.theme_swither_min}`} />
-                <Navbar.Toggle className={`${classes.navbar_toggler}`} aria-controls="navbarScroll">
+                <Navbar.Toggle aria-label="Settings" className={`${classes.navbar_toggler}`} aria-controls="navbarScroll">
                     <MobileMenuIcon />
                 </Navbar.Toggle>
                 <Navbar.Collapse id="navbarScroll">
