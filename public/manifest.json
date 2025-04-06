@@ -29,13 +29,6 @@
   ],
   "screenshots" : [
     {
-      "src": "main.png",
-      "sizes": "640x360",
-      "type": "image/png",
-      "form_factor": "wide",
-      "label": "Main"
-    },
-    {
       "src": "properties.png",
       "sizes": "640x360",
       "type": "image/png",
@@ -43,11 +36,18 @@
       "label": "Properties"
     },
     {
-      "src": "bracket.png",
+      "src": "profile.png",
       "sizes": "640x360",
       "type": "image/png",
       "form_factor": "wide",
-      "label": "Bracket"
+      "label": "Profile"
+    },
+    {
+      "src": "tournament.png",
+      "sizes": "640x360",
+      "type": "image/png",
+      "form_factor": "wide",
+      "label": "Tournament"
     },
     {
       "src": "m_main.png",
