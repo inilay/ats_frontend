@@ -23,7 +23,7 @@ const profileApi = {
     },
 
     updateProfiIcon: async (api, slug, data) => {
-        const response = api.patch(`/img_change/${slug}/`, data, {
+        const response = api.patch(`${API_SERVER}/img_change/${slug}/`, data, {
             headers: {
                 "Content-Type": "multipart/form-data",
             },
@@ -44,6 +44,12 @@ const profileApi = {
 
     resetPasswordConfirm: async (api, responseBody) => {
         const response = await api.post(`${API_SERVER}/password_reset_confirm/`, responseBody);
+
+        return response;
+    },
+    
+    createPushToken: async (api, responseBody) => {
+        const response = await api.post(`${API_SERVER}/create_push_token/`, responseBody);
 
         return response;
     },
