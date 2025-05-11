@@ -135,7 +135,7 @@ const CreateTournament = () => {
             .createTournament(api, data)
             .then(function (response) {
                 if (response.status == 201) {
-                    // navigate(`/tournament/${responseBody.title.toLowerCase().replace(/ /g, '-').replace(/[^\w-]+/g, '')}`)
+                    navigate(`/tournament/${responseBody.title.toLowerCase().replace(/ /g, '-').replace(/[^\w-]+/g, '')}`)
                 }
             })
             .catch((error) => {
